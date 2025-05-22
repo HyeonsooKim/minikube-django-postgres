@@ -1,0 +1,72 @@
+# IDEs
+.vscode
+
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media
+static/
+.env
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
+.kube/
+kubectl
+.kubectl/
+helm
+.helm/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Secrets
+secrets/
+*.secret
+*.key
+*.pem
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+tmp/
+.coverage
+htmlcov/
+.pytest_cache/
