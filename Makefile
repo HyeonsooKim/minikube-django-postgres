@@ -7,3 +7,6 @@ apply-all:
 
 service:
 	minikube service nginx
+
+build-django:
+	docker build -t minikube-django:latest -f django/Dockerfile .
