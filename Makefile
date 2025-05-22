@@ -1,3 +1,11 @@
+kube-start:
+	minikube start --driver=docker --listen-address=0.0.0.0
+
+build-django:
+	# Build the Django image in Minikube's Docker daemon
+	eval $(minikube docker-env)
+	docker build -t minikube-django:latest -f django/Dockerfile .
+
 apply-all:
 	kubectl apply -f secrets/postgres-secret.yaml
 	kubectl apply -f postgres/
@@ -7,6 +15,3 @@ apply-all:
 
 service:
 	minikube service nginx
-
-build-django:
-	docker build -t minikube-django:latest -f django/Dockerfile .
