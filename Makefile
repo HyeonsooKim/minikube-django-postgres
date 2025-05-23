@@ -9,4 +9,7 @@ service:
 	minikube service nginx
 
 build-django:
-	docker build -t minikube-django:latest -f django/Dockerfile .
+	eval $$(minikube docker-env) && docker build -t minikube-django:latest -f django/Dockerfile .
+
+down-nginx:
+	minikube service --url nginx | xargs -I {} sh -c 'echo "Stopping nginx service at {}"; kubectl delete service nginx'
