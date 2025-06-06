@@ -15,6 +15,7 @@ spec:
       containers:
         - name: django
           image: minikube-django:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8000
           env:
