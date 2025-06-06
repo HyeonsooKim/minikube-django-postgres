@@ -3,10 +3,13 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
-COPY ./django /app
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Copy requirements first for better caching
+COPY django/requirements.txt /app/
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Copy the rest of the application
+COPY django/ /app/
 
 # Make the entrypoint script executable
 RUN chmod +x /app/entrypoint.sh
