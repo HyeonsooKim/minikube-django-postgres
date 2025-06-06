@@ -5,7 +5,7 @@ set -e
 
 # Wait for PostgreSQL to be ready
 echo "Waiting for PostgreSQL to be ready..."
-python << END
+python <<END
 import socket
 import time
 import os
