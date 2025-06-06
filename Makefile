@@ -1,7 +1,10 @@
 
 # ===== Build Commands =====
 build-django:
+	@echo "🔨 Building Django Docker image..."
 	eval $$(minikube docker-env) && docker build -t minikube-django:latest -f django/Dockerfile .
+	@echo "✅ Django image built successfully!"
+	@eval $$(minikube docker-env) && docker images | grep minikube-django
 
 rebuild-django: build-django
 	@echo "Redeploying Django service..."
@@ -20,9 +23,11 @@ apply-all:
 run-all: build-django apply-all
 	@echo "\n🚀 Starting all services: Postgres, Django, and Nginx...\n"
 	@echo "✅ Services are starting up, please wait a moment..."
-	@sleep 5
+	@sleep 10
 	@echo "\n📊 Checking pod status:"
 	@kubectl get pods
+	@echo "\n⏳ Waiting for Django pod to be ready..."
+	@kubectl wait --for=condition=ready --timeout=120s pod -l app=django || echo "⚠️ Timeout waiting for Django pod. Check status with 'kubectl describe pod -l app=django'"
 	@echo "\n🔗 Your application will be available at:"
 	@minikube service nginx --url
 	@echo "\n🌐 SSH tunnel setup for remote access:"
@@ -70,3 +75,12 @@ status:
 	@kubectl get svc
 	@echo "\n🔍 Deployments:"
 	@kubectl get deployments
+
+debug-django:
+	@echo "🔍 Debugging Django pod issues..."
+	@echo "\nPod details:"
+	@kubectl describe pod -l app=django
+	@echo "\nLogs (if pod exists):"
+	@kubectl logs -l app=django --tail=50 || echo "⚠️ No logs available"
+	@echo "\nDocker image status:"
+	@eval $$(minikube docker-env) && docker images | grep minikube-django || echo "⚠️ No Django image found in minikube"
