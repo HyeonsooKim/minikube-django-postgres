@@ -20,6 +20,21 @@ apply-all:
 	kubectl apply -f nginx/
 	kubectl apply -f nginx/nginx-configmap.yaml
 
+enable-ingress:
+	@echo "🚀 Enabling Nginx Ingress Controller in Minikube..."
+	@chmod +x enable-ingress.sh
+	@./enable-ingress.sh
+	@echo "✅ Nginx Ingress Controller enabled successfully!"
+
+apply-ingress: enable-ingress
+	@echo "🚀 Applying Ingress resources..."
+	@kubectl apply -f nginx/ingress.yaml
+	@echo "✅ Ingress resources applied successfully!"
+	@echo "\n🔍 Ingress status:"
+	@kubectl get ingress
+	@echo "\n🌐 Ingress IP (may take a moment to be assigned):"
+	@kubectl get ingress django-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}' || echo "IP not yet assigned"
+
 run-all: build-django apply-all
 	@echo "\n🚀 Starting all services: Postgres, Django, and Nginx...\n"
 	@echo "✅ Services are starting up, please wait a moment..."
@@ -75,6 +90,15 @@ status:
 	@kubectl get svc
 	@echo "\n🔍 Deployments:"
 	@kubectl get deployments
+	@echo "\n🔍 Ingress:"
+	@kubectl get ingress
+
+scale-django:
+	@echo "🔄 Scaling Django deployment to $(REPLICAS) replicas..."
+	@kubectl scale deployment/django --replicas=$(REPLICAS)
+	@echo "✅ Django scaled to $(REPLICAS) replicas"
+	@echo "\n📊 Current pod status:"
+	@kubectl get pods -l app=django
 
 debug-django:
 	@echo "🔍 Debugging Django pod issues..."
