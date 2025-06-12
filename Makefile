@@ -50,7 +50,7 @@ run-all: build-django apply-all
 	MINIKUBE_IP=$$(minikube ip) && \
 	echo "→ Local access URL: http://$${MINIKUBE_IP}:$${NGINX_PORT}" && \
 	echo "→ For remote access, run on your local machine:" && \
-	echo "  ssh -L 8080:$${MINIKUBE_IP}:$${NGINX_PORT} $(whoami)@YOUR_SERVER_IP -N" && \
+	echo "  ssh -L 8080:$${MINIKUBE_IP}:$${NGINX_PORT} $(whoami)@10.0.0.11 -N" && \
 	echo "  Then open: http://localhost:8080 in your browser"
 
 down-all:
@@ -73,13 +73,29 @@ expose-nginx:
 	@echo "Exposing nginx service on port 8080 of the remote server..."
 	@kubectl port-forward --address 0.0.0.0 service/nginx 8080:80
 
+expose-nginx-public:
+	@echo "🌐 Exposing Nginx service publicly..."
+	@NODE_PORT=$$(kubectl get svc nginx -o jsonpath='{.spec.ports[0].nodePort}') && \
+	MINIKUBE_IP=$$(minikube ip) && \
+	echo "✅ Nginx is now publicly accessible at:" && \
+	echo "🔗 Local URL: http://$${MINIKUBE_IP}:$${NODE_PORT}" && \
+	echo "🌍 Public URL (use your server's public IP): http://10.0.0.11:$${NODE_PORT}" && \
+	echo "\n💡 If your server has a firewall, make sure port $${NODE_PORT} is open" && \
+	echo "📝 To open the port on your server, you can run:" && \
+	echo "   sudo ufw allow $${NODE_PORT}/tcp    # for UFW firewall" && \
+	echo "   sudo firewall-cmd --permanent --add-port=$${NODE_PORT}/tcp    # for firewalld"
+
+open-nginx-firewall:
+	@echo "🔓 Running script to open firewall ports for Nginx..."
+	@./expose-nginx-public.sh
+
 tunnel-nginx:
 	@echo "Setting up SSH tunnel for nginx service..."
 	@NGINX_PORT=$$(kubectl get svc nginx -o jsonpath='{.spec.ports[0].nodePort}') && \
 	MINIKUBE_IP=$$(minikube ip) && \
 	echo "You can access nginx at: http://$${MINIKUBE_IP}:$${NGINX_PORT}" && \
 	echo "To make this accessible from outside, run on your local machine:" && \
-	echo "ssh -L 8080:$${MINIKUBE_IP}:$${NGINX_PORT} $(whoami)@YOUR_SERVER_IP -N"
+	echo "ssh -L 8080:$${MINIKUBE_IP}:$${NGINX_PORT} $(whoami)@10.0.0.11 -N"
 
 # ===== Monitoring Commands =====
 status:
@@ -108,3 +124,8 @@ debug-django:
 	@kubectl logs -l app=django --tail=50 || echo "⚠️ No logs available"
 	@echo "\nDocker image status:"
 	@eval $$(minikube docker-env) && docker images | grep minikube-django || echo "⚠️ No Django image found in minikube"
+
+nginx-logs:
+	@echo "📋 Fetching Nginx access logs..."
+	@POD_NAME=$$(kubectl get pods -l app=nginx -o jsonpath='{.items[0].metadata.name}') && \
+	kubectl exec -it $${POD_NAME} -- tail -f /var/log/nginx/access.log

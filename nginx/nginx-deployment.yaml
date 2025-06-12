@@ -17,11 +17,35 @@ spec:
           image: nginx:latest
           ports:
             - containerPort: 80
+              name: http
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
+            - name: static-volume
+              mountPath: /app/staticfiles
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
       volumes:
         - name: nginx-config
           configMap:
             name: nginx-config
+        - name: static-volume
+          emptyDir: {}
