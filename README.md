@@ -16,33 +16,18 @@ This project sets up a single-cluster Kubernetes environment using `Minikube`, `
     minikube start
     ```
 
-2.  **Enable Ingress:**
+2.  **Initialize and Apply with Make:**
+    The `Makefile` provides a convenient way to manage the project. To deploy everything, simply run:
     ```bash
-    minikube addons enable ingress
+    make tf-apply
     ```
-
-3.  **Point Docker to Minikube's Docker daemon:**
-    ```bash
-    eval $(minikube docker-env)
-    ```
-
-4.  **Initialize Terraform:**
-    Navigate to the `terraform` directory and run:
-    ```bash
-    cd terraform
-    terraform init
-    ```
-
-5.  **Apply the Terraform configuration:**
-    ```bash
-    terraform apply
-    ```
-    This command will:
+    This single command will:
+    - Initialize Terraform.
     - Build the Django Docker image.
-    - Deploy PostgreSQL, Django, and Nginx to your Minikube cluster.
-    - Set up the necessary services, secrets, and ingress.
+    - Deploy PostgreSQL, Django, and Nginx.
+    - Set up all necessary services, secrets, and ingress.
 
-6.  **Access the application:**
+3.  **Access the application:**
     Find your Minikube IP:
     ```bash
     minikube ip
@@ -51,7 +36,7 @@ This project sets up a single-cluster Kubernetes environment using `Minikube`, `
 
 ## Cleanup
 
-To tear down all the resources created by Terraform, run:
+To tear down all the resources, use the `make` command:
 ```bash
-terraform destroy
+make tf-destroy
 ```
