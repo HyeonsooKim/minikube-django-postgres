@@ -61,6 +61,36 @@ down-all:
 	@kubectl delete -f secrets/postgres-secret.yaml || true
 	@echo "✅ All services stopped"
 
+# ===== Terraform Commands =====
+tf-init:
+	@echo "🚀 Initializing Terraform..."
+	@cd terraform && terraform init
+	@echo "✅ Terraform initialized successfully!"
+
+tf-plan:
+	@echo "📝 Creating Terraform execution plan..."
+	@cd terraform && terraform plan
+	@echo "✅ Terraform plan created successfully!"
+
+tf-apply:
+	@echo "🚀 Applying Terraform changes..."
+	@cd terraform && terraform apply -auto-approve
+	@echo "✅ Terraform changes applied successfully!"
+
+tf-destroy:
+	@echo "💣 Destroying Terraform resources..."
+	@cd terraform && terraform destroy -auto-approve
+	@echo "✅ Terraform resources destroyed successfully!"
+
+tf-clean:
+	@echo "🧹 Cleaning up existing Kubernetes resources..."
+	@kubectl delete deployment django nginx postgres --ignore-not-found
+	@kubectl delete service django nginx postgres --ignore-not-found
+	@kubectl delete configmap nginx-config --ignore-not-found
+	@kubectl delete secret postgres-secret --ignore-not-found
+	@kubectl delete ingress django-ingress --ignore-not-found
+	@echo "✅ Cleanup complete!"
+
 # ===== Nginx Service Access Commands =====
 service:
 	minikube service nginx

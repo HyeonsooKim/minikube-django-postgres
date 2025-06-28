@@ -1,72 +1,56 @@
-# IDEs
-.vscode
-
-# Django
+# --- General ---
+.DS_Store
 *.log
-*.pot
-*.pyc
+logs/
+tmp/
+*.tmp
+
+# --- IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Python & Django ---
 __pycache__/
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-media
-static/
-.env
 *.py[cod]
-*$py.class
 *.so
 .Python
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
+.env
+db.sqlite3
+db.sqlite3-journal
+/media/
+/static/
+.pytest_cache/
+.coverage
+htmlcov/
 
-# Virtual Environment
-venv/
-ENV/
-env/
+# --- Virtual Environments ---
 .venv/
+venv/
+env/
+ENV/
 
-# Kubernetes
-kubeconfig
-*.kubeconfig
-.kube/
-kubectl
-.kubectl/
-helm
-.helm/
+# --- Terraform ---
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl
 
-# IDE specific files
-.idea/
-.vscode/
-*.swp
-*.swo
-.DS_Store
-
-# Secrets
+# --- Secrets ---
+# Keep secrets in a dedicated, gitignored directory.
+# The `secrets` directory is intentionally not committed.
 secrets/
 *.secret
 *.key
 *.pem
-
-# Logs
-logs/
-*.log
-
-# Temporary files
-*.tmp
-tmp/
-.coverage
-htmlcov/
-.pytest_cache/
